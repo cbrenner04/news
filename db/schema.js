@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var articleSchema = new Schema({
     title: String,
-    author: String,
+    origin: String,
     link: String,
     timestamp: {
         type: Date,

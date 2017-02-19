@@ -1,9 +1,6 @@
 var bodyParser = require('body-parser');
-var cheerio = require('cheerio');
 var express = require('express');
 var expressHandlebars = require('express-handlebars');
-var request = require('request');
-
 var db = require('./models/article').db;
 
 var app = express();
