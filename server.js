@@ -2,7 +2,7 @@ var bodyParser = require('body-parser');
 var express = require('express');
 var expressHandlebars = require('express-handlebars');
 // var methodOverride = require('method-override');
-var db = require('./models/article').db;
+var db = require('./models/index').db;
 
 var app = express();
 var port = process.env.PORT || 3000;

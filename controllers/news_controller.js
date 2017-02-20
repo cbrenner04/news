@@ -1,4 +1,6 @@
-var Article = require('../models/article').Article;
+var models = require('../models/index');
+var Article = models.Article;
+var Comment = models.Comment;
 var cheerio = require('cheerio');
 var request = require('request');
 
@@ -45,20 +47,46 @@ module.exports = function(app) {
             link: article.link,
             origin: article.origin
         }, function(error, _) {
-            if (error) return handleError(error);
+            if (error) {
+                console.log(error);
+            }
         });
         response.redirect('/');
     });
 
     app.get('/saved_articles', function(request, response) {
-        Article.find({}, function(error, articles) {
-            if (error) {
-                response.send(error);
-            }
-            var articleMap = articles.map(function(article) {
-                return article;
+        Article.find({})
+            .populate('comments')
+            .exec(function(error, articles) {
+                if (error) {
+                    response.send(error);
+                }
+                var articleMap = articles.map(function(article) {
+                    return article;
+                });
+                response.render('saved_articles', {
+                    articles: articleMap
+                });
             });
-            response.render('saved_articles', { articles: articleMap });
+    });
+
+    app.post('/comments', function(request, response) {
+        var comment = request.body;
+        Article.findOne({
+            title: comment.article_title
+        }, function(error, article) {
+            Comment.create({
+                _article: article._id,
+                body: comment.body
+            }, function(error, comment) {
+                article.comments.push(comment);
+                article.save(function(error) {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
+            });
         });
+        response.redirect('/saved_articles');
     });
 };
