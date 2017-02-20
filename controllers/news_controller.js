@@ -7,19 +7,21 @@ module.exports = function(app) {
     // get root
     app.get('/', function(_request, response) {
         var scrapings = [];
-        request('https://news.ycombinator.com/', function(error, _response, html) {
+        request('https://news.ycombinator.com/', function(_error, _response, html) {
             var $ = cheerio.load(html);
             $('.title').each(function(i, element) {
-              if (i % 2 !== 0) {
-                var articleObject = {};
-                articleObject.title = $('a', element).first().text();
-                articleObject.link = $('a', element).attr('href');
-                articleObject.origin = $(element).children().children().text();
-                scrapings.push(articleObject);
-              }
+                if (i % 2 !== 0) {
+                    var articleObject = {};
+                    articleObject.id = i;
+                    articleObject.title = $('a', element).first().text();
+                    articleObject.link = $('a', element).attr('href');
+                    articleObject.origin = $(element).children().children().text();
+                    scrapings.push(articleObject);
+                }
             });
-            console.log(scrapings);
-            response.render('index', { articles: scrapings });
+            response.render('index', {
+                articles: scrapings
+            });
         });
     });
 
@@ -34,5 +36,17 @@ module.exports = function(app) {
             });
             response.json(articleMap);
         });
+    });
+
+    app.post('/articles', function(request, response) {
+        var article = request.body;
+        Article.create({
+            title: article.title,
+            link: article.link,
+            origin: article.origin
+        }, function(error, _) {
+            if (error) return handleError(error);
+        });
+        response.redirect('/');
     });
 };
