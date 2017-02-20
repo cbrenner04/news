@@ -49,4 +49,16 @@ module.exports = function(app) {
         });
         response.redirect('/');
     });
+
+    app.get('/saved_articles', function(request, response) {
+        Article.find({}, function(error, articles) {
+            if (error) {
+                response.send(error);
+            }
+            var articleMap = articles.map(function(article) {
+                return article;
+            });
+            response.render('saved_articles', { articles: articleMap });
+        });
+    });
 };

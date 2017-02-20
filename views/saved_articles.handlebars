@@ -1,0 +1,10 @@
+<ul class="list-group">
+    {{#each articles}}
+        <li class="list-group-item">
+            <h4 class="list-group-item-heading">
+                <a href="{{ this.link }}">{{ this.title }}</a>
+            </h4>
+            <p class="list-group-item-text">{{ this.origin }}</p>
+        </li>
+    {{/each}}
+</ul>
