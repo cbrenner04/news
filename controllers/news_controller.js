@@ -84,9 +84,19 @@ module.exports = function(app) {
                     if (error) {
                         console.log(error);
                     }
+                    response.redirect('/saved_articles');
                 });
             });
         });
-        response.redirect('/saved_articles');
+    });
+
+    app.delete('/comments/:id', function(request, response) {
+        var commentId = request.params.id;
+        Comment.remove({ _id: commentId }, function(error, comment) {
+            if (error) {
+                console.log(error);
+            }
+            response.redirect('/saved_articles');
+        });
     });
 };

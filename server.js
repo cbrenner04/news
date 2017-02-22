@@ -1,7 +1,7 @@
 var bodyParser = require('body-parser');
 var express = require('express');
 var expressHandlebars = require('express-handlebars');
-// var methodOverride = require('method-override');
+var methodOverride = require('method-override');
 var db = require('./models/index').db;
 
 var app = express();
@@ -18,7 +18,7 @@ app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + '/public'));
 
 // Override with POST having ?_method=DELETE
-// app.use(methodOverride('_method'));
+app.use(methodOverride('_method'));
 
 app.use(bodyParser.json());
 // Parse application/x-www-form-urlencoded
