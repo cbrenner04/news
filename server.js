@@ -2,7 +2,8 @@ var bodyParser = require('body-parser');
 var express = require('express');
 var expressHandlebars = require('express-handlebars');
 var methodOverride = require('method-override');
-var db = require('./models/index').db;
+var mongoose = require('mongoose');
+mongoose.Promise = Promise;
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -25,6 +26,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+
+mongoose.connect('mongodb://heroku_w84ktq71:ipefkl8ksohi858fviu2j7o7ib' +
+    '@ds019471.mlab.com:19471/heroku_w84ktq71');
+var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {

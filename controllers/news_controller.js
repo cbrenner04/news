@@ -1,6 +1,5 @@
-var models = require('../models/index');
-var Article = models.Article;
-var Comment = models.Comment;
+var Article = require('../models/article');
+var Comment = require('../models/comment');
 var cheerio = require('cheerio');
 var request = require('request');
 
@@ -32,11 +31,12 @@ module.exports = function(app) {
         Article.find({}, function(error, articles) {
             if (error) {
                 response.send(error);
+            } else {
+                var articleMap = articles.map(function(article) {
+                    return article;
+                });
+                response.json(articleMap);
             }
-            var articleMap = articles.map(function(article) {
-                return article;
-            });
-            response.json(articleMap);
         });
     });
 
@@ -44,10 +44,11 @@ module.exports = function(app) {
         var article = request.body;
         Article.create(article, function(error, _article) {
             if (error) {
-                console.log(error);
+                response.send(error);
+            } else {
+                response.redirect('/');
             }
         });
-        response.redirect('/');
     });
 
     app.get('/articles', function(request, response) {
@@ -56,13 +57,14 @@ module.exports = function(app) {
             .exec(function(error, articles) {
                 if (error) {
                     response.send(error);
+                } else {
+                    var articleMap = articles.map(function(article) {
+                        return article;
+                    });
+                    response.render('articles', {
+                        articles: articleMap
+                    });
                 }
-                var articleMap = articles.map(function(article) {
-                    return article;
-                });
-                response.render('articles', {
-                    articles: articleMap
-                });
             });
     });
 
@@ -78,21 +80,23 @@ module.exports = function(app) {
                 article.comments.push(comment);
                 article.save(function(error) {
                     if (error) {
-                        console.log(error);
+                        response.send(error);
+                    } else {
+                        response.redirect('/articles');
                     }
-                    response.redirect('/articles');
                 });
             });
         });
     });
 
-    app.delete('/comments/:id', function(request, response) {
-        var commentId = request.params.id;
+    app.delete('/comments', function(request, response) {
+        var commentId = request.body.id;
         Comment.remove({ _id: commentId }, function(error, comment) {
             if (error) {
-                console.log(error);
+                response.send(error);
+            } else {
+                response.redirect('/articles');
             }
-            response.redirect('/articles');
         });
     });
 };
