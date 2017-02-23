@@ -42,11 +42,7 @@ module.exports = function(app) {
 
     app.post('/articles', function(request, response) {
         var article = request.body;
-        Article.create({
-            title: article.title,
-            link: article.link,
-            origin: article.origin
-        }, function(error, _) {
+        Article.create(article, function(error, _article) {
             if (error) {
                 console.log(error);
             }
