@@ -27,7 +27,7 @@ module.exports = function(app) {
         });
     });
 
-    // get the all articles route
+    // api route for all saved articles
     app.get('/api/articles', function(_request, response) {
         Article.find({}, function(error, articles) {
             if (error) {
@@ -54,7 +54,7 @@ module.exports = function(app) {
         response.redirect('/');
     });
 
-    app.get('/saved_articles', function(request, response) {
+    app.get('/articles', function(request, response) {
         Article.find({})
             .populate('comments')
             .exec(function(error, articles) {
@@ -64,7 +64,7 @@ module.exports = function(app) {
                 var articleMap = articles.map(function(article) {
                     return article;
                 });
-                response.render('saved_articles', {
+                response.render('articles', {
                     articles: articleMap
                 });
             });
@@ -84,7 +84,7 @@ module.exports = function(app) {
                     if (error) {
                         console.log(error);
                     }
-                    response.redirect('/saved_articles');
+                    response.redirect('/articles');
                 });
             });
         });
@@ -96,7 +96,7 @@ module.exports = function(app) {
             if (error) {
                 console.log(error);
             }
-            response.redirect('/saved_articles');
+            response.redirect('/articles');
         });
     });
 };
