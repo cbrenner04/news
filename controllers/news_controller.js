@@ -51,7 +51,7 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/articles', function(request, response) {
+    app.get('/articles', function(_request, response) {
         Article.find({})
             .populate('comments')
             .exec(function(error, articles) {
@@ -66,6 +66,17 @@ module.exports = function(app) {
                     });
                 }
             });
+    });
+
+    app.delete('/articles/:id', function(request, response) {
+        var articleId = request.params.id;
+        Article.remove({ _id: articleId }, function(error, _article) {
+            if (error) {
+                response.send(error);
+            } else {
+                response.redirect('/articles');
+            }
+        });
     });
 
     app.post('/comments', function(request, response) {
@@ -89,9 +100,9 @@ module.exports = function(app) {
         });
     });
 
-    app.delete('/comments', function(request, response) {
-        var commentId = request.body.id;
-        Comment.remove({ _id: commentId }, function(error, comment) {
+    app.delete('/comments/:id', function(request, response) {
+        var commentId = request.params.id;
+        Comment.remove({ _id: commentId }, function(error, _comment) {
             if (error) {
                 response.send(error);
             } else {
